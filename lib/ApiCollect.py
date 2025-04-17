@@ -22,7 +22,11 @@ class Apicollect():
                       r'\w\+\"(.*?)\"\,',
                       r'\:{url\:\"(.*?)\"\,',
                       r'return\s.*?\[\".\"\]\.post\(\"(.*?)\"',
-                      r'return\s.*?\[\".\"\]\.get\(\"(.*?)\"']
+                      r'return\s.*?\[\".\"\]\.get\(\"(.*?)\"',
+                      r'[\'\"](?:\/|\.\.\/|\.\/)[^\/\>\< \)\(\{\}\,\'\"\\](?:[^\>\< \)\(\{\}\,\'\"\\])*?[\'\"]', # 匹配完整路径
+                      r'[\'\"][^\/\>\< \)\(\{\}\,\'\"\\][\w\/]*?\/[\w\/]*?[\'\"]',# 匹配不完整路径
+                      r'(?:"|\')(/(?!\d+$)[\w\-/]+)(?:"|\')' 
+                      ]
         self.baseUrlRegxs = [r'url.?\s?\:\s?\"(.*?)\"',
                              r'url.?\s?\+\s?\"(.*?)\"',
                              r'url.?\s?\=\s?\"(.*?)\"',
@@ -188,7 +192,7 @@ class Apicollect():
                         self.log.debug("api收集和baseurl提取成功")
                     except Exception as e:
                         self.log.error("[Err] %s" % e)
-        if len(self.apiPaths) < 30:  #提取结果过少时暴力破解
+        if "1" == "1" :  #提取结果过少时暴力破解
             self.log.info(Utils().tellTime() + Utils().getMyWord("{total_api_auto}"))
             for parent, dirnames, filenames in os.walk(projectPath, followlinks=True):
                 for filename in filenames:
@@ -216,6 +220,19 @@ class Apicollect():
                             except Exception as e:
                                 self.log.error("[Err] %s" % e)
         self.apiComplete()
+        # 保存API路径和JS路径到临时文件
+        tmp_dir = os.path.join(os.path.dirname(DatabaseType(self.projectTag).getPathfromDB()), 'tmp')
+        os.makedirs(tmp_dir, exist_ok=True)
+        
+        api_file = os.path.join(tmp_dir, 'api.txt')
+        js_file = os.path.join(tmp_dir, 'js.txt')
+        
+        with open(api_file, 'a', encoding='utf-8') as f_api, open(js_file, 'a', encoding='utf-8') as f_js:
+            for path in self.apiPaths:
+                if '§§§' in path:
+                    api_path, js_path = path.split('§§§', 1)
+                    f_api.write(api_path + '\n')
+                    f_js.write(js_path + '\n')
 
     def baseUrlDevelop(self):
         # print(", ".join(output)) 要改进压缩在一起并输入在log内

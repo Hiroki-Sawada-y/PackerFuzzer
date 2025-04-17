@@ -8,7 +8,7 @@ class CommandLines():
 
     def cmd(self):
         parse = optparse.OptionParser()
-        parse.add_option('-u', '--url', dest='url', help='Please Enter the Target Site')
+        parse.add_option('-u', '--url', dest='url', default=None, help='Please Enter the Target Site')
         parse.add_option('-c', '--cookie', dest='cookie', help='Please Enter the Site Cookies')
         parse.add_option('-d', '--head', dest='head', default='Cache-Control:no-cache', help='Please Enter the extra HTTP head')
         parse.add_option('-l', '--lang', dest='language', help='Please Select Language')
@@ -26,9 +26,6 @@ class CommandLines():
         parse.add_option('--ah', '--apihost', dest='apihost', type=str, help='ApiHost like: https://pocsir.com:777/')
         parse.add_option('--fe', '--fileext', dest='filenameextension', type=str, help='Api Filename Extension such as: .json')
         (options, args) = parse.parse_args()
-        if options.url == None:
-            parse.print_help()
-            sys.exit(0)
         return options
 
 

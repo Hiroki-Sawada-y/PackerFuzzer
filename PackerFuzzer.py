@@ -20,6 +20,6 @@ class Program():
 
 if __name__ == '__main__':
     cmd = CommandLines().cmd()
-    testProxy(cmd,1)
+    testProxy(cmd,'https://baidu.com')
     PackerFuzzer = Program(cmd)
     PackerFuzzer.check()

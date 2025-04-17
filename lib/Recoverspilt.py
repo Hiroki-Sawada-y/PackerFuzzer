@@ -65,7 +65,7 @@ class RecoverSpilt():
             self.getRealFilePath(jsSplitId, self.jsFileNames, jsUrlPath)
             self.log.debug("jscodecomplie模块正常")
         except Exception as e:
-            self.log.error("[Err] %s" % e)  # 这块有问题，逻辑要改进
+            self.log.error("[Err]这里正则有问题 记得改！！！！ %s" % e)  # 这块有问题，逻辑要改进
             return 0
 
     def checkCodeSpilting(self, jsFilePath):
@@ -87,7 +87,7 @@ class RecoverSpilt():
         # 我是没见过webpack异步加载的js和放异步的js不在同一个目录下的，这版先不管不同目录的情况吧
         jsRealPaths = []
         res = urlparse(jsUrlpath)
-        resForDB = urlparse(self.options.url) # 但是会有js和扫描目标不在同一个域名的情况 现在我遇到了 这样保证数据库能正常载入
+        resForDB = urlparse(jsUrlpath) # 但是会有js和扫描目标不在同一个域名的情况 现在我遇到了 这样保证数据库能正常载入
         if "§§§" in jsUrlpath:  # html中script情況
             jsUrlpath = jsUrlpath.split('§§§')[0]
             tmpUrl = jsUrlpath.split("/")
@@ -96,7 +96,7 @@ class RecoverSpilt():
             base_url = "/".join(tmpUrl)
             for jsFileName in jsFileNames:
                 jsFileName = base_url + jsFileName
-                jsRealPaths.append(jsFileName)
+                jsRealPaths.append(jsFileName.encode('utf-8'))
         else:
             tmpUrl = jsUrlpath.split("/")
             del tmpUrl[-1]
@@ -104,15 +104,18 @@ class RecoverSpilt():
             for jsFileName in jsFileNames:
                 jsFileName = Utils().getFilename(jsFileName)  # 获取js名称
                 jsFileName = base_url + jsFileName
-                jsRealPaths.append(jsFileName)
+                jsRealPaths.append(jsFileName.encode('utf-8'))
         try:
             domain = resForDB.netloc
             if ":" in domain:
                 domain = str(domain).replace(":", "_") #处理端口号
-            DownloadJs(jsRealPaths,self.options).downloadJs(self.projectTag, domain, jsSplitId)
-            self.log.debug("downjs功能正常")
+                DownloadJs(jsRealPaths,self.options).downloadJs(self.projectTag, domain, jsSplitId)
+                self.log.debug("downjs功能正常")
+            else:
+                DownloadJs(jsRealPaths,self.options).downloadJs(self.projectTag, domain, jsSplitId)
+                self.log.debug("downjs功能正常")
         except Exception as e:
-            self.log.error("[Err] %s" % e)
+            self.log.error("[Err]xxx %s" % e)
 
     def checkSpiltingTwice(self, projectPath):
         self.log.info(Utils().tellTime() + Utils().getMyWord("{check_codesplit_twice}"))

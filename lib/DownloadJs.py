@@ -60,7 +60,8 @@ class DownloadJs():
                     self.jsRealPaths.remove(jsRealPath)
         return self.jsRealPaths
 
-    def downloadJs(self, tag, host, spiltId):  # 下载js文件
+    def downloadJs(self, tag, host, spiltId):
+        print(1)  # 下载js文件
         if self.options.cookie != None:
             header = {
                 'User-Agent': random.choice(self.UserAgent),
@@ -76,13 +77,18 @@ class DownloadJs():
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                 self.options.head.split(':')[0]: self.options.head.split(':')[1]
             }
-        self.jsRealPaths = list(set(self.jsRealPaths)) # list清单去重
+
+        self.jsRealPaths = list(set(self.jsRealPaths))
+         # list清单去重
         try:
-            self.jsRealPaths = self.jsBlacklist()  # 不能放for循环内
+            self.jsRealPaths = [item.decode('utf-8') for item in self.jsRealPaths]
+            self.jsRealPaths = self.jsBlacklist()
+              # 不能放for循环内
             self.log.debug("js黑名单函数正常")
         except Exception as e:
             self.log.error("[Err] %s" % e)
         for jsRealPath in self.jsRealPaths:
+            
             jsFilename = Utils().getFilename(jsRealPath)
             jsTag = Utils().creatTag(6)
             PATH = "tmp/" + tag + "_" + host + "/" + tag + ".db"
